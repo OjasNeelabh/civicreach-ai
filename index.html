@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicReach AI — Indian Public Services & Free Legal Aid Portal</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Focus indicators adhering to WCAG 2.4.7 & GIGW 3.0 */
+    *:focus-visible {
+      outline: 3px solid #1D4ED8 !important;
+      outline-offset: 3px !important;
+    }
+    
+    /* High contrast theme custom overrides (GIGW 3.0 / WCAG AAA) */
+    .theme-high-contrast {
+      background-color: #000000 !important;
+      color: #FFFFFF !important;
+    }
+    .theme-high-contrast .a11y-card {
+      background-color: #121212 !important;
+      border-color: #FFE600 !important;
+      color: #FFFFFF !important;
+    }
+    .theme-high-contrast .a11y-accent-btn {
+      background-color: #FFE600 !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      border: 2px solid #FFFFFF !important;
+    }
+    .theme-high-contrast .a11y-text-muted {
+      color: #E2E8F0 !important;
+    }
+
+    /* Easy-Read / Dyslexia font & spacing enhancements */
+    .theme-easy-read {
+      letter-spacing: 0.06em !important;
+      line-height: 1.85 !important;
+      word-spacing: 0.15em !important;
+    }
+  </style>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-4 md:p-6" id="app-root">
+  
+  <!-- Outer Application Container -->
+  <main class="max-w-4xl mx-auto bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-2xl shadow-xl overflow-hidden a11y-card" role="main">
+
+    <!-- Top Gov of India / GIGW 3.0 Header -->
+    <header class="bg-[var(--sidebar)] border-b border-[var(--border)] p-4 space-y-3" aria-label="Official Government Header & Accessibility Toolbar">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 via-blue-700 to-emerald-700 flex items-center justify-center text-white font-black text-xl shadow-sm" aria-hidden="true">
+            CR
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base font-extrabold leading-tight">CivicReach AI <span class="font-normal text-xs text-[var(--muted-foreground)]">| भारत</span></h1>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold border border-emerald-500/20">
+                NALSA & Tele-Law Partner
+              </span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted">Digital Legal Aid & Public Welfare Service (GIGW 3.0 / WCAG 2.2 AAA)</p>
+          </div>
+        </div>
+
+        <!-- Language Selector (6 Major Indian Languages) -->
+        <div class="flex items-center gap-2" role="region" aria-label="Select Official Language">
+          <label for="lang-select" class="text-xs font-semibold flex items-center gap-1">
+            <span>🌐</span> <span class="hidden sm:inline">Language:</span>
+          </label>
+          <select id="lang-select" onchange="changeLanguage(this.value)" class="text-xs font-bold px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] min-h-[44px] cursor-pointer focus:ring-2 focus:ring-blue-500">
+            <option value="en">English (India)</option>
+            <option value="hi" selected>हिन्दी (Hindi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="mr">मराठी (Marathi)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Accessibility Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[var(--border)]">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btn-mode-standard" onclick="setMode('standard')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-blue-600 text-white min-h-[40px]" aria-pressed="true">
+            Standard
+          </button>
+          <button id="btn-mode-contrast" onclick="setMode('contrast')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--sidebar)] min-h-[40px]" aria-pressed="false" title="High Contrast for Low Vision">
+            👁️ High Contrast (7:1+)
+          </button>
+          <button id="btn-mode-easyread" onclick="setMode('easyread')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--sidebar)] min-h-[40px]" aria-pressed="false" title="Easy Read for Cognitive & Dyslexia">
+            📖 Easy Read (सरल पाठ)
+          </button>
+        </div>
+
+        <button id="btn-mode-audio" onclick="toggleVoiceSpeech()" class="px-3 py-1.5 text-xs font-bold rounded-lg border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 min-h-[40px] flex items-center gap-1.5" aria-pressed="false">
+          <span id="audio-icon">🔊</span> <span id="audio-label">बोलकर सुनें (Listen)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Constitutional Guarantee & Free Legal Aid Banner -->
+    <section class="bg-amber-50/80 dark:bg-amber-950/30 border-b border-amber-200/60 dark:border-amber-900/50 px-6 py-2.5 flex flex-wrap items-center justify-between text-xs font-medium" aria-label="Legal Aid Guarantee">
+      <div class="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+        <span class="text-base" aria-hidden="true">⚖️</span>
+        <span id="banner-text"><strong>अनुच्छेद 39A:</strong> महिलाओं, बच्चों, SC/ST और ₹1.5 लाख से कम आय वालों के लिए 100% मुफ्त सरकारी वकील।</span>
+      </div>
+      <div class="text-[var(--muted-foreground)] a11y-text-muted">
+        <span>NALSA हेल्पलाइन: <strong>15100</strong></span>
+      </div>
+    </section>
+
+    <!-- Main Dynamic Body -->
+    <div class="p-6 md:p-8 space-y-8">
+
+      <!-- STEP 1: Indian Service & Legal Aid Selector -->
+      <section id="step-1" class="space-y-6" aria-labelledby="step-1-heading">
+        <div class="space-y-2">
+          <h2 id="step-1-heading" class="text-xl md:text-2xl font-bold tracking-tight">
+            आपको किस प्रकार की सरकारी सहायता चाहिए?
+          </h2>
+          <p id="step-1-sub" class="text-sm text-[var(--muted-foreground)] a11y-text-muted">
+            नीचे दिए गए विकल्पों में से चुनें। आप बोलकर भी बता सकते हैं।
+          </p>
+        </div>
+
+        <!-- 3 Primary Focus Areas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" role="group" aria-label="Categories">
+          
+          <!-- Category 1: Free Legal Aid (NALSA) -->
+          <button type="button" onclick="selectCategory(this, 'legal')" class="cat-card text-left p-5 rounded-xl border-2 border-blue-600 bg-blue-50/40 dark:bg-blue-950/30 transition flex flex-col justify-between gap-4 min-h-[130px] focus:ring-4 focus:ring-blue-500/20" aria-pressed="true">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl" aria-hidden="true">⚖️</span>
+              <span class="status-badge text-xs px-2 py-0.5 rounded font-bold text-blue-700 dark:text-blue-300">चयनित ✓</span>
+            </div>
+            <div>
+              <div class="font-bold text-base">मुफ्त कानूनी सहायता (NALSA)</div>
+              <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted mt-0.5">कोर्ट समन, जमीन विवाद, घरेलू हिंसा, मुफ्त वकील</p>
+            </div>
+          </button>
+
+          <!-- Category 2: Food & Ration (NFSA) -->
+          <button type="button" onclick="selectCategory(this, 'ration')" class="cat-card text-left p-5 rounded-xl border-2 border-[var(--border)] hover:border-blue-500 bg-[var(--card)] transition flex flex-col justify-between gap-4 min-h-[130px] focus:ring-4 focus:ring-blue-500/20" aria-pressed="false">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl" aria-hidden="true">🌾</span>
+              <span class="status-badge text-xs px-2 py-0.5 rounded bg-[var(--sidebar)] text-[var(--muted-foreground)]">चुनें</span>
+            </div>
+            <div>
+              <div class="font-bold text-base">राशन और खाद्य सुरक्षा (NFSA)</div>
+              <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted mt-0.5">अंत्योदय (AAY), राशन कार्ड में नाम, मुफ्त अनाज</p>
+            </div>
+          </button>
+
+          <!-- Category 3: Health (Ayushman Bharat) -->
+          <button type="button" onclick="selectCategory(this, 'health')" class="cat-card text-left p-5 rounded-xl border-2 border-[var(--border)] hover:border-blue-500 bg-[var(--card)] transition flex flex-col justify-between gap-4 min-h-[130px] focus:ring-4 focus:ring-blue-500/20" aria-pressed="false">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl" aria-hidden="true">🏥</span>
+              <span class="status-badge text-xs px-2 py-0.5 rounded bg-[var(--sidebar)] text-[var(--muted-foreground)]">चुनें</span>
+            </div>
+            <div>
+              <div class="font-bold text-base">आयुष्मान भारत (PM-JAY)</div>
+              <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted mt-0.5">₹5 लाख तक मुफ्त इलाज, अस्पताल में मनाही की शिकायत</p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Section 12 Legal Aid Rapid Eligibility Check -->
+        <div class="p-5 rounded-xl border border-[var(--border)] bg-[var(--sidebar)] space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm">मुफ्त कानूनी सहायता पात्रता (धारा 12, विधिक सेवा प्राधिकरण अधिनियम 1987)</h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold">100% नि:शुल्क</span>
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted">
+            यदि आप महिला हैं, SC/ST समुदाय से हैं, दिव्यांगजन हैं, या आपकी वार्षिक पारिवारिक आय ₹1.5 लाख से कम है, तो सरकार आपके केस का सारा खर्च (वकील व कोर्ट फीस) वहन करती है।
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs cursor-pointer">
+              <input type="checkbox" id="check-woman" checked onchange="evalEligibility()" class="w-4 h-4 text-blue-600 rounded">
+              <span>महिला या बच्चा</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs cursor-pointer">
+              <input type="checkbox" id="check-scst" onchange="evalEligibility()" class="w-4 h-4 text-blue-600 rounded">
+              <span>SC / ST समुदाय</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs cursor-pointer">
+              <input type="checkbox" id="check-pwd" onchange="evalEligibility()" class="w-4 h-4 text-blue-600 rounded">
+              <span>दिव्यांगजन (RPwD)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-xs cursor-pointer">
+              <input type="checkbox" id="check-income" checked onchange="evalEligibility()" class="w-4 h-4 text-blue-600 rounded">
+              <span>आय &lt; ₹1.5 लाख</span>
+            </label>
+          </div>
+          <div id="eligibility-status-box" class="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-2">
+            <span>✓</span>
+            <span id="eligibility-status-msg">बधाई! आप धारा 12 के तहत 100% मुफ्त सरकारी वकील पाने के पूर्ण हकदार हैं।</span>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button onclick="goToStep(2)" class="a11y-accent-btn px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2 min-h-[50px]">
+            <span id="btn-next-step1">अगला: कानूनी नोटिस या दस्तावेज की जांच</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 2: Indian Legal Document Decryptor & Plain-Language Explainer -->
+      <section id="step-2" class="space-y-6 hidden" aria-labelledby="step-2-heading">
+        <div class="space-y-2">
+          <h2 id="step-2-heading" class="text-xl md:text-2xl font-bold tracking-tight">
+            कानून समझो (Vision AI Document Decryptor)
+          </h2>
+          <p id="step-2-sub" class="text-sm text-[var(--muted-foreground)] a11y-text-muted">
+            कोर्ट समन, तहसीलदार नोटिस, या अस्पताल का बिल स्कैन करें। AI इसे आपकी भाषा में सरल करके बताएगा।
+          </p>
+        </div>
+
+        <!-- Sample Official Indian Notices -->
+        <div class="p-4 rounded-xl border border-dashed border-[var(--border)] bg-[var(--sidebar)] flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="font-semibold text-sm">आधिकारिक कानूनी नोटिस का नमूना चुनें:</div>
+            <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted">देखें कि CivicReach AI भारतीय कानूनों के आधार पर कैसे मदद करता है:</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="loadIndianDoc('summons')" class="px-3 py-2 text-xs font-semibold rounded-lg bg-[var(--card)] border border-[var(--border)] hover:border-blue-500 transition min-h-[44px]">
+              📜 कोर्ट समन (धारा 145 CrPC / BNSS)
+            </button>
+            <button onclick="loadIndianDoc('hospital')" class="px-3 py-2 text-xs font-semibold rounded-lg bg-[var(--card)] border border-[var(--border)] hover:border-blue-500 transition min-h-[44px]">
+              🏥 आयुष्मान भारत इलाज मनाही नोटिस
+            </button>
+          </div>
+        </div>
+
+        <!-- Side-by-Side: Complex Indian Legal Text vs Plain Language AI Solution -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          
+          <!-- Left: Difficult Legal Notice -->
+          <div class="p-5 rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20 space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-red-700 dark:text-red-400">
+              <span class="flex items-center gap-1.5">❌ मूल कानूनी नोटिस (Complex Legal Text)</span>
+              <span class="px-2 py-0.5 rounded bg-red-100 dark:bg-red-900/60 font-mono">न्यायालय नोटिस</span>
+            </div>
+            <div id="raw-doc-text" class="text-xs font-mono p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] leading-relaxed text-[var(--muted-foreground)] max-h-48 overflow-y-auto">
+              "न्यायालय अनुमंडल दंडाधिकारी, वाद संख्या 412/2026: बमुताबिक धारा 145 दंड प्रक्रिया संहिता (CrPC) / BNSS, प्रतिवादी को एतद द्वारा सूचित किया जाता है कि मौजा-रामपुर खाता सं. 42 खेसरा 108 बाबत भूमि विवाद में दिनांक 14 नवंबर को पूर्वाह्न 10:30 बजे सशरीर उपस्थित हों अन्यथा एकतरफा आदेश पारित कर दिया जाएगा।"
+            </div>
+            <p class="text-xs text-red-600 dark:text-red-300 italic">
+              समस्या: नागरिक 'धारा 145' और 'एकतरफा आदेश' सुनकर घबरा जाते हैं और दलालों के चक्कर में हजारों रुपये गंवा देते हैं।
+            </p>
+          </div>
+
+          <!-- Right: CivicReach AI Plain Language & Rights -->
+          <div class="p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400">
+              <span class="flex items-center gap-1.5">✅ आपकी भाषा में सरल समझ (Plain Rights)</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 font-semibold">सरल हिन्दी (कक्षा 4 स्तर)</span>
+            </div>
+            <div id="plain-doc-text" class="text-sm p-4 rounded-lg bg-[var(--card)] border border-[var(--border)] leading-relaxed font-medium space-y-2">
+              <p class="font-bold text-emerald-800 dark:text-emerald-300">"घबराने की कोई बात नहीं है, यह गिरफ्तारी का नोटिस नहीं है।"</p>
+              <ul class="text-xs space-y-1.5 list-disc list-inside text-[var(--foreground)]">
+                <li><strong>यह क्या है:</strong> आपकी रामपुर वाली जमीन की मेड़ को लेकर केवल पूछताछ का नोटिस है।</li>
+                <li><strong>तारीख:</strong> आपको <strong>14 नवंबर सुबह 10:30 बजे</strong> एसडीएम कोर्ट जाना है।</li>
+                <li><strong>आपका कानूनी अधिकार:</strong> कानूनी सेवा प्राधिकरण अधिनियम की धारा 12 के तहत आपको <strong>मुफ्त सरकारी वकील (Free DLSA Lawyer)</strong> मिलेगा। आपको किसी वकील को फीस नहीं देनी है।</li>
+              </ul>
+            </div>
+            <div class="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-400">
+              <span>सत्यापित कानून: <strong>LSA Act 1987 § 12</strong></span>
+              <button onclick="readAloudCurrentPlain()" class="underline font-semibold hover:opacity-80">🔊 बोलकर सुनें</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between gap-4">
+          <button onclick="goToStep(1)" class="px-5 py-3 border border-[var(--border)] rounded-xl font-semibold text-sm hover:bg-[var(--sidebar)] transition min-h-[48px]">
+            ← वापस जाएं
+          </button>
+          <button onclick="goToStep(3)" class="a11y-accent-btn px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2 min-h-[50px]">
+            <span>अगला: मुफ्त वकील / सहायता बुक करें</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Tele-Law & DLSA Lawyer Connect -->
+      <section id="step-3" class="space-y-6 hidden" aria-labelledby="step-3-heading">
+        <div class="space-y-2">
+          <h2 id="step-3-heading" class="text-xl md:text-2xl font-bold tracking-tight">
+            मुफ्त सरकारी वकील व कानूनी सहायता (Tele-Law & DLSA)
+          </h2>
+          <p class="text-sm text-[var(--muted-foreground)] a11y-text-muted">
+            न्याय विभाग, भारत सरकार एवं NALSA द्वारा समर्थित मुफ्त परामर्श व्यवस्था।
+          </p>
+        </div>
+
+        <!-- Lawyer Match & Booking Card -->
+        <div class="p-6 rounded-2xl border-2 border-blue-500/40 bg-blue-50/40 dark:bg-blue-950/20 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider">निशुल्क विधिक परामर्श (Free Legal Consultation)</span>
+              <div class="text-2xl md:text-3xl font-black text-blue-900 dark:text-blue-100 mt-1">₹0 (पूर्णतः निःशुल्क)</div>
+            </div>
+            <div class="text-right">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> DLSA पैनल अधिवक्ता अधिकृत
+              </span>
+              <p class="text-xs text-[var(--muted-foreground)] a11y-text-muted mt-1">अनुच्छेद 39A के तहत संवैधानिक अधिकार</p>
+            </div>
+          </div>
+
+          <div class="border-t border-blue-200/50 dark:border-blue-900/50 pt-4 space-y-2 text-xs md:text-sm">
+            <div class="flex justify-between">
+              <span class="text-[var(--muted-foreground)] a11y-text-muted">आवश्यक कानूनी क्षेत्र:</span>
+              <span class="font-semibold" id="summary-area">जमीन विवाद एवं कोर्ट समन (Revenue & Civil)</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[var(--muted-foreground)] a11y-text-muted">परामर्श माध्यम:</span>
+              <span class="font-semibold text-emerald-700 dark:text-emerald-400">टेली-लॉ फोन कॉल या नजदीकी CSC केंद्र पर वीडियो कॉल</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-[var(--muted-foreground)] a11y-text-muted">कानूनी अधिकार:</span>
+              <span class="font-semibold">धारा 12 (विधिक सेवा प्राधिकरण अधिनियम, 1987)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grievance & Citizen Rights Guarantee -->
+        <div class="p-4 rounded-xl border border-blue-300/60 dark:border-blue-700/60 bg-blue-50/60 dark:bg-blue-950/30 flex items-start gap-3 text-xs text-blue-900 dark:text-blue-200">
+          <span class="text-xl" aria-hidden="true">🛡️</span>
+          <div>
+            <div class="font-bold">नागरिक अधिकार गारंटी:</div>
+            <p class="mt-0.5">आपका यह आवेदन सीधे जिला विधिक सेवा प्राधिकरण (DLSA) और कॉमन सर्विस सेंटर (CSC) को प्रेषित होगा। किसी भी दलाल को एक रुपया भी न दें।</p>
+          </div>
+        </div>
+
+        <div class="pt-4 flex flex-wrap items-center justify-between gap-4">
+          <button onclick="goToStep(2)" class="px-5 py-3 border border-[var(--border)] rounded-xl font-semibold text-sm hover:bg-[var(--sidebar)] transition min-h-[48px]">
+            ← वापस जाएं
+          </button>
+          
+          <button onclick="submitLegalAid()" class="a11y-accent-btn px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-base shadow-lg transition flex items-center gap-2 min-h-[56px]">
+            <span>✓ मुफ्त वकील से संपर्क अनुरोध भेजें</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Post-Submission State -->
+      <section id="step-success" class="space-y-6 hidden text-center py-8" aria-live="polite">
+        <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+          ✓
+        </div>
+        <div class="space-y-2">
+          <h2 class="text-2xl font-black">अनुरोध सफलतापूर्वक दर्ज हुआ!</h2>
+          <p class="text-sm text-[var(--muted-foreground)] a11y-text-muted max-w-md mx-auto">
+            आपकी टेली-लॉ संदर्भ संख्या है: <strong class="text-[var(--foreground)]">#TL-IN-2026-981</strong>
+          </p>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--border)] bg-[var(--sidebar)] max-w-md mx-auto text-left text-xs space-y-1.5">
+          <div class="font-bold">आगे क्या होगा?</div>
+          <p class="text-[var(--muted-foreground)] a11y-text-muted">• आपके मोबाइल पर नि:शुल्क पैनल वकील का नाम व कॉल का समय SMS द्वारा भेजा गया है।</p>
+          <p class="text-[var(--muted-foreground)] a11y-text-muted">• आप अपने गांव के कॉमन सर्विस सेंटर (CSC) जाकर वीडियो कॉल पर भी वकील से बात कर सकते हैं।</p>
+          <p class="text-[var(--muted-foreground)] a11y-text-muted">• किसी भी समस्या के लिए NALSA राष्ट्रीय हेल्पलाइन <strong>15100</strong> पर मुफ्त कॉल करें।</p>
+        </div>
+        <button onclick="resetPrototype()" class="px-6 py-3 border border-[var(--border)] rounded-xl font-semibold text-xs hover:bg-[var(--sidebar)] transition min-h-[44px]">
+          ↻ नई सहायता या अन्य भाषा का परीक्षण करें
+        </button>
+      </section>
+
+    </div>
+
+    <!-- Live Assistive Screen-Reader Telemetry Log (ARIA-Live Stream) -->
+    <footer class="bg-[var(--sidebar)] border-t border-[var(--border)] p-4 text-xs font-mono space-y-1.5" role="region" aria-label="Screen reader telemetry simulation">
+      <div class="flex items-center justify-between text-[var(--muted-foreground)] a11y-text-muted">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <strong>स्क्रीन-रीडर टेलीमेट्री (Bhashini AI / GIGW 3.0 Live Stream)</strong>
+        </span>
+        <span>WCAG 4.1.2 & GIGW Compliant</span>
+      </div>
+      <div id="a11y-log" class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)] text-blue-700 dark:text-blue-300 text-xs overflow-x-auto truncate">
+        "पोर्टल लोड हुआ। नागरिक सहायता एवं मुफ्त कानूनी अधिकार (NALSA). भाषा: हिन्दी।"
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    // State management
+    let state = {
+      lang: 'hi',
+      mode: 'standard',
+      step: 1,
+      isSpeaking: false,
+      isEligibleSection12: true
+    };
+
+    // Multilingual strings dictionary
+    const i18n = {
+      en: {
+        banner: "<strong>Article 39A:</strong> 100% Free Government Legal Aid for women, children, SC/ST, and income under ₹1.5 Lakh.",
+        heading1: "What public or legal support do you need today?",
+        sub1: "Choose from options below or speak directly in your language.",
+        nextBtn: "Next: Scan Legal Notice or Document →",
+        listenLabel: "Listen Screen (Voice)",
+        speechIntro: "Welcome to CivicReach AI. You can access free government legal aid under Article 39A and social welfare schemes."
+      },
+      hi: {
+        banner: "<strong>अनुच्छेद 39A:</strong> महिलाओं, बच्चों, SC/ST और ₹1.5 लाख से कम आय वालों के लिए 100% मुफ्त सरकारी वकील।",
+        heading1: "आपको किस प्रकार की सरकारी सहायता चाहिए?",
+        sub1: "नीचे दिए गए विकल्पों में से चुनें। आप बोलकर भी बता सकते हैं।",
+        nextBtn: "अगला: कानूनी नोटिस या दस्तावेज की जांच →",
+        listenLabel: "बोलकर सुनें (Listen)",
+        speechIntro: "सिविक-रीच एआई में आपका स्वागत है। अनुच्छेद 39A के तहत मुफ्त कानूनी सहायता और योजनाओं की जानकारी।"
+      },
+      ta: {
+        banner: "<strong>சட்டப்பிரிவு 39A:</strong> பெண்கள், குழந்தைகள், SC/ST மற்றும் ₹1.5 லட்சத்திற்கும் குறைவான வருமானம் உள்ளவர்களுக்கு 100% இலவச அரசு வழக்கறிஞர்.",
+        heading1: "இன்று உங்களுக்கு என்ன பொது அல்லது சட்ட உதவி தேவை?",
+        sub1: "கீழே உள்ள விருப்பங்களிலிருந்து தேர்வு செய்யவும் அல்லது குரல் மூலம் பேசவும்.",
+        nextBtn: "அடுத்து: சட்ட நோட்டீஸ் அல்லது ஆவணத்தை ஆய்வு செய் →",
+        listenLabel: "கேட்க (Listen Voice)",
+        speechIntro: "சிவிக்-ரீச் ஏஐ-க்கு வரவேற்கிறோம். இலவச சட்ட உதவி மற்றும் நலத்திட்டங்கள்."
+      },
+      te: {
+        banner: "<strong>ఆర్టికల్ 39A:</strong> మహిళలు, పిల్లలు, SC/ST మరియు ₹1.5 లక్షల లోపు ఆదాయం ఉన్నవారికి 100% ఉచిత ప్రభుత్వ న్యాయవాది.",
+        heading1: "మీకు ఈరోజు ఎలాంటి ప్రభుత్వ లేదా న్యాయ సహాయం కావాలి?",
+        sub1: "క్రింది ఎంపికల నుండి ఎంచుకోండి లేదా మాట్లాడండి.",
+        nextBtn: "తరువాత: లీగల్ నోటీసు లేదా పత్రాన్ని పరిశీలించండి →",
+        listenLabel: "వినండి (Listen Voice)",
+        speechIntro: "సివిక్ రీచ్ ఏఐ కి స్వాగతం. ఉచిత న్యాయ సహాయం మరియు ప్రభుత్వ పథకాలు."
+      },
+      bn: {
+        banner: "<strong>ধারা 39A:</strong> মহিলা, শিশু, SC/ST এবং ₹1.5 লক্ষের কম আয়ের ব্যক্তিদের জন্য 100% বিনামূল্যে সরকারি আইনজীবী।",
+        heading1: "আজ আপনার কী ধরণের সরকারি বা আইনি সহায়তা প্রয়োজন?",
+        sub1: "নিচের বিকল্পগুলি থেকে বেছে নিন অথবা কথা বলুন।",
+        nextBtn: "পরবর্তী: আইনি নোটিশ বা নথি যাচাই করুন →",
+        listenLabel: "শুনে নিন (Listen Voice)",
+        speechIntro: "সিভিকরিচ এআই তে স্বাগতম। বিনামূল্যে আইনি সহায়তা এবং সরকারি প্রকল্প।"
+      },
+      mr: {
+        banner: "<strong>अनुच्छेद 39A:</strong> महिला, बालके, SC/ST आणि ₹1.5 लाखांपेक्षा कमी उत्पन्न असणाऱ्यांसाठी 100% मोफत सरकारी वकील.",
+        heading1: "तुम्हाला आज कोणती सरकारी किंवा कायदेशीर मदत हवी आहे?",
+        sub1: "खालील पर्यायांपैकी निवडा किंवा बोलून सांगा.",
+        nextBtn: "पुढे: कायदेशीर नोटीस किंवा कागदपत्र तपासा →",
+        listenLabel: "ऐका (Listen Voice)",
+        speechIntro: "सिविकरीच एआय मध्ये आपले स्वागत आहे. मोफत कायदेशीर मदत आणि सरकारी योजना."
+      }
+    };
+
+    function announceA11y(text) {
+      const log = document.getElementById('a11y-log');
+      if (log) {
+        log.textContent = `"${text}"`;
+      }
+      if (state.isSpeaking && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.95;
+        // Adjust language for speech synthesis if available
+        const langMap = { en: 'en-IN', hi: 'hi-IN', ta: 'ta-IN', te: 'te-IN', bn: 'bn-IN', mr: 'mr-IN' };
+        utter.lang = langMap[state.lang] || 'hi-IN';
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function changeLanguage(langCode) {
+      state.lang = langCode;
+      const dict = i18n[langCode] || i18n.hi;
+
+      document.getElementById('banner-text').innerHTML = dict.banner;
+      document.getElementById('step-1-heading').textContent = dict.heading1;
+      document.getElementById('step-1-sub').textContent = dict.sub1;
+      document.getElementById('btn-next-step1').textContent = dict.nextBtn;
+      document.getElementById('audio-label').textContent = dict.listenLabel;
+
+      announceA11y(`Language switched to ${langCode.toUpperCase()}. ${dict.speechIntro}`);
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      const root = document.getElementById('app-root');
+      root.classList.remove('theme-high-contrast', 'theme-easy-read');
+
+      document.getElementById('btn-mode-standard').setAttribute('aria-pressed', mode === 'standard');
+      document.getElementById('btn-mode-contrast').setAttribute('aria-pressed', mode === 'contrast');
+      document.getElementById('btn-mode-easyread').setAttribute('aria-pressed', mode === 'easyread');
+
+      if (mode === 'contrast') {
+        root.classList.add('theme-high-contrast');
+        announceA11y("हाई कंट्रास्ट मोड सक्रिय। 7:1 कंट्रास्ट अनुपात लागू।");
+      } else if (mode === 'easyread') {
+        root.classList.add('theme-easy-read');
+        announceA11y("सरल पाठ (Easy Read) मोड सक्रिय।");
+      } else {
+        announceA11y("मानक मोड पुनः स्थापित।");
+      }
+    }
+
+    function toggleVoiceSpeech() {
+      state.isSpeaking = !state.isSpeaking;
+      const btn = document.getElementById('btn-mode-audio');
+      if (state.isSpeaking) {
+        btn.classList.add('bg-emerald-600', 'text-white');
+        announceA11y(i18n[state.lang]?.speechIntro || "Voice active.");
+      } else {
+        btn.classList.remove('bg-emerald-600', 'text-white');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        announceA11y("Voice paused.");
+      }
+    }
+
+    function evalEligibility() {
+      const woman = document.getElementById('check-woman').checked;
+      const scst = document.getElementById('check-scst').checked;
+      const pwd = document.getElementById('check-pwd').checked;
+      const income = document.getElementById('check-income').checked;
+
+      const isEligible = woman || scst || pwd || income;
+      const box = document.getElementById('eligibility-status-box');
+      const msg = document.getElementById('eligibility-status-msg');
+
+      if (isEligible) {
+        box.className = "p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-2";
+        msg.textContent = "बधाई! आप धारा 12 के तहत 100% मुफ्त सरकारी वकील पाने के पूर्ण हकदार हैं।";
+        announceA11y("धारा 12 पात्रता सत्यापित: आप मुफ्त सरकारी वकील पाने के हकदार हैं।");
+      } else {
+        box.className = "p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-500/30 text-xs text-amber-800 dark:text-amber-300 font-medium flex items-center gap-2";
+        msg.textContent = "यदि आप सामान्य श्रेणी से हैं, तो भी आप मामूली शुल्क पर टेली-लॉ परामर्श ले सकते हैं।";
+        announceA11y("पात्रता सूचना: आप सामान्य टेली-लॉ परामर्श का लाभ ले सकते हैं।");
+      }
+    }
+
+    function selectCategory(btn, cat) {
+      document.querySelectorAll('.cat-card').forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-50/40', 'dark:bg-blue-950/30');
+        b.setAttribute('aria-pressed', 'false');
+        const badge = b.querySelector('.status-badge');
+        if (badge) {
+          badge.textContent = "चुनें";
+          badge.className = "status-badge text-xs px-2 py-0.5 rounded bg-[var(--sidebar)] text-[var(--muted-foreground)]";
+        }
+      });
+
+      btn.classList.add('border-blue-600', 'bg-blue-50/40', 'dark:bg-blue-950/30');
+      btn.setAttribute('aria-pressed', 'true');
+      const badge = btn.querySelector('.status-badge');
+      if (badge) {
+        badge.textContent = "चयनित ✓";
+        badge.className = "status-badge text-xs px-2 py-0.5 rounded font-bold text-blue-700 dark:text-blue-300";
+      }
+
+      announceA11y(`चयनित श्रेणी: ${cat}`);
+    }
+
+    function goToStep(step) {
+      document.getElementById(`step-${state.step}`).classList.add('hidden');
+      state.step = step;
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+      announceA11y(`चरण ${step} खोला गया।`);
+    }
+
+    function loadIndianDoc(type) {
+      const raw = document.getElementById('raw-doc-text');
+      const plain = document.getElementById('plain-doc-text');
+
+      if (type === 'summons') {
+        raw.textContent = `"न्यायालय अनुमंडल दंडाधिकारी, वाद संख्या 412/2026: बमुताबिक धारा 145 दंड प्रक्रिया संहिता (CrPC) / BNSS, प्रतिवादी को एतद द्वारा सूचित किया जाता है कि मौजा-रामपुर खाता सं. 42 खेसरा 108 बाबत भूमि विवाद में दिनांक 14 नवंबर को पूर्वाह्न 10:30 बजे सशरीर उपस्थित हों अन्यथा एकतरफा आदेश पारित कर दिया जाएगा।"`;
+        plain.innerHTML = `
+          <p class="font-bold text-emerald-800 dark:text-emerald-300">"घबराने की कोई बात नहीं है, यह गिरफ्तारी का नोटिस नहीं है।"</p>
+          <ul class="text-xs space-y-1.5 list-disc list-inside text-[var(--foreground)]">
+            <li><strong>यह क्या है:</strong> आपकी रामपुर वाली जमीन की मेड़ को लेकर केवल पूछताछ का नोटिस है।</li>
+            <li><strong>तारीख:</strong> आपको <strong>14 नवंबर सुबह 10:30 बजे</strong> एसडीएम कोर्ट जाना है।</li>
+            <li><strong>आपका कानूनी अधिकार:</strong> कानूनी सेवा प्राधिकरण अधिनियम की धारा 12 के तहत आपको <strong>मुफ्त सरकारी वकील (Free DLSA Lawyer)</strong> मिलेगा। आपको किसी वकील को फीस नहीं देनी है।</li>
+          </ul>
+        `;
+        announceA11y("कोर्ट समन लोड हुआ। सरल भाषा में समझाया गया: यह गिरफ्तारी नहीं, जमीन पूछताछ है।");
+      } else {
+        raw.textContent = `"HOSPITAL BILLING MEMO: ADMISSION UNDER PM-JAY DENIED CITING NON-COVERAGE OF RETINOPATHY SURGICAL PACKAGE S110001. ADVANCE MANDATORY DEPOSIT OF ₹45,000 REQUIRED PRIOR TO INTERVENTION."`;
+        plain.innerHTML = `
+          <p class="font-bold text-emerald-800 dark:text-emerald-300">"अस्पताल आपसे अवैध रूप से पैसे मांग रहा है।"</p>
+          <ul class="text-xs space-y-1.5 list-disc list-inside text-[var(--foreground)]">
+            <li><strong>नियम:</strong> आयुष्मान भारत योजना के तहत रेटिनोपैथी सर्जरी 100% कैशलेस (मुफ्त) है।</li>
+            <li><strong>अवैध मांग:</strong> अस्पताल का ₹45,000 मांगना स्वास्थ्य प्राधिकरण के नियमों का उल्लंघन है।</li>
+            <li><strong>कार्यवाही:</strong> हम आपकी ओर से जिला शिकायत अधिकारी (DGRO) को तुरंत ऑनलाइन शिकायत दर्ज कर रहे हैं।</li>
+          </ul>
+        `;
+        announceA11y("अस्पताल बिल लोड हुआ। आयुष्मान भारत नियमों के तहत शिकायत तैयार की गई।");
+      }
+    }
+
+    function readAloudCurrentPlain() {
+      const text = document.getElementById('plain-doc-text').innerText;
+      announceA11y(text);
+    }
+
+    function submitLegalAid() {
+      document.getElementById('step-3').classList.add('hidden');
+      document.getElementById('step-success').classList.remove('hidden');
+      announceA11y("अनुरोध दर्ज हुआ! टेली-लॉ संदर्भ संख्या TL-IN-2026-981. मुफ्त वकील SMS द्वारा संपर्क करेंगे।");
+    }
+
+    function resetPrototype() {
+      document.getElementById('step-success').classList.add('hidden');
+      state.step = 1;
+      document.getElementById('step-1').classList.remove('hidden');
+      announceA11y("प्रोटोटाइप पुनः आरंभ हुआ।");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicReach AI — Indian Public Services & Free Legal Aid Portal</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen p-3 md:p-6 transition-colors" id="app-body">
+
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Top Sovereign Header & A11y Toolbar -->
+    <header class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 md:p-6 shadow-sm space-y-4 a11y-card" role="banner">
+      
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 via-blue-700 to-emerald-600 flex items-center justify-center text-white font-black text-2xl shadow-md" aria-hidden="true">
+            CR
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl md:text-2xl font-black tracking-tight">CivicReach AI <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 font-bold border border-blue-500/20">भारत</span></h1>
+            </div>
+            <p id="portal-tagline" class="text-xs text-slate-500 dark:text-slate-400 font-medium a11y-text-muted">
+              NALSA & Tele-Law Partner | GIGW 3.0 & WCAG 2.2 AAA Accessible
+            </p>
+          </div>
+        </div>
+
+        <!-- Language Switcher & Controls -->
+        <div class="flex items-center gap-2.5">
+          <label for="lang-select" class="text-xs font-bold flex items-center gap-1 text-slate-700 dark:text-slate-300">
+            <span>🌐</span> <span class="hidden sm:inline">Language:</span>
+          </label>
+          <select id="lang-select" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-xs font-extrabold cursor-pointer focus:ring-2 focus:ring-blue-600">
+            <option value="en">English (Default)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Accessibility Toggles -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800" role="toolbar" aria-label="Accessibility controls">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="setDisplayMode('standard')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-blue-600 text-white min-h-[40px]" title="Reset to standard view">
+            Standard
+          </button>
+          <button id="btn-mode-contrast" onclick="setDisplayMode('contrast')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 min-h-[40px]" title="OLED High Contrast mode for low-vision">
+            👁️ High Contrast (7:1+)
+          </button>
+          <button id="btn-mode-easyread" onclick="setDisplayMode('easyread')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 min-h-[40px]" title="Easy-Read and Dyslexia typography mode">
+            📖 Easy Read
+          </button>
+        </div>
+
+        <button id="btn-toggle-audio" onclick="toggleVoiceAudio()" class="px-4 py-2 text-xs font-bold rounded-xl border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 min-h-[40px] flex items-center gap-2 transition">
+          <span id="audio-icon">🔊</span> <span id="audio-label">Listen (Voice)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Constitutional Guarantee Banner -->
+    <aside class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-2xl px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-amber-950 dark:text-amber-200 shadow-sm" aria-label="Constitutional Legal Aid Notice">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl" aria-hidden="true">⚖️</span>
+        <div id="article-39a-banner">
+          <strong>Article 39A:</strong> 100% Free Government Legal Aid for women, children, SC/ST, and families with income under ₹1.5 Lakh.
+        </div>
+      </div>
+      <div class="font-bold flex items-center gap-3">
+        <span>NALSA Helpline: <a href="tel:15100" class="underline hover:text-amber-700 font-extrabold">15100</a></span>
+        <span>Tele-Law: <a href="tel:14455" class="underline hover:text-amber-700 font-extrabold">14455</a></span>
+      </div>
+    </aside>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex flex-wrap items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm a11y-card" role="tablist">
+      <button id="tab-btn-laws" onclick="switchTab('laws')" class="px-5 py-3 rounded-xl border-2 border-blue-600 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-extrabold text-xs md:text-sm flex items-center gap-2 transition" role="tab" aria-selected="true">
+        ⚖️ Legal Rights & Penal Codes
+      </button>
+      <button id="tab-btn-decrypt" onclick="switchTab('decrypt')" class="px-5 py-3 rounded-xl border-2 border-transparent hover:border-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs md:text-sm flex items-center gap-2 transition" role="tab" aria-selected="false">
+        📜 Kanoon Samjho (Notice Decryptor)
+      </button>
+      <button id="tab-btn-nalsa" onclick="switchTab('nalsa')" class="px-5 py-3 rounded-xl border-2 border-transparent hover:border-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs md:text-sm flex items-center gap-2 transition" role="tab" aria-selected="false">
+        🛡️ Free Legal Aid Screener (Sec 12)
+      </button>
+      <button id="tab-btn-telelaw" onclick="switchTab('telelaw')" class="px-5 py-3 rounded-xl border-2 border-transparent hover:border-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs md:text-sm flex items-center gap-2 transition" role="tab" aria-selected="false">
+        📞 Tele-Law / Lawyer Connect
+      </button>
+    </nav>
+
+    <!-- TAB 1: Search Laws & Penal Codes -->
+    <section id="tab-content-laws" class="space-y-6" role="tabpanel">
+      <!-- Search Box with Voice Input -->
+      <div class="relative flex items-center gap-2">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search any law, crime, right, dispute (e.g., 'cheating', 'land dispute', 'domestic violence', 'bail')..." 
+          class="w-full px-5 py-4 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm md:text-base font-medium shadow-sm focus:border-blue-600 min-h-[56px] pr-28"
+          onkeydown="if(event.key==='Enter') fetchLaws(this.value)"
+        >
+        <div class="absolute right-3 flex items-center gap-1.5">
+          <button id="btn-mic-search" class="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition text-sm" title="Search with your voice" aria-label="Voice search">
+            🎙️
+          </button>
+          <button onclick="fetchLaws(document.getElementById('search-input').value)" class="a11y-accent-btn px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-md transition min-h-[44px]">
+            <span id="search-btn-text">Search</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Topics Chips -->
+      <div class="flex flex-wrap items-center gap-2 text-xs font-semibold" aria-label="Popular quick topics">
+        <span class="text-slate-500 dark:text-slate-400">Popular:</span>
+        <button onclick="document.getElementById('search-input').value='land dispute'; fetchLaws('land dispute')" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition">
+          🌾 Land & Property (Sec 168 BNSS)
+        </button>
+        <button onclick="document.getElementById('search-input').value='cheating 420'; fetchLaws('cheating 420')" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition">
+          💵 Cheating / 420 (Sec 318 BNS)
+        </button>
+        <button onclick="document.getElementById('search-input').value='domestic violence'; fetchLaws('domestic violence')" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition">
+          🛡️ Women Safety (Sec 85 BNS)
+        </button>
+        <button onclick="document.getElementById('search-input').value='zero fir'; fetchLaws('zero fir')" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition">
+          🚨 Zero FIR (Sec 173 BNSS)
+        </button>
+        <button onclick="document.getElementById('search-input').value='ayushman'; fetchLaws('ayushman')" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition">
+          🏥 Ayushman Bharat PM-JAY
+        </button>
+      </div>
+
+      <!-- Results Container -->
+      <div id="laws-results-list" class="space-y-4" aria-live="polite">
+        <!-- Laws injected by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 2: Kanoon Samjho (Notice Decryptor) -->
+    <section id="tab-content-decrypt" class="space-y-6 hidden" role="tabpanel">
+      <div class="p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-6 shadow-sm a11y-card">
+        
+        <div class="space-y-1">
+          <h2 class="text-xl md:text-2xl font-black">Kanoon Samjho — Document & Notice Decryptor</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Paste the text from any legal notice, court summons, police notice, or hospital bill to see what it actually means in 4th-grade plain language.
+          </p>
+        </div>
+
+        <!-- Sample Buttons -->
+        <div class="p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-between gap-3">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Try a sample notice:</span>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="decryptNoticeText('summons')" class="px-3.5 py-2 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition min-h-[40px]">
+              📜 SDM Court Summons (Land Inquiry)
+            </button>
+            <button onclick="decryptNoticeText('hospital')" class="px-3.5 py-2 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500 transition min-h-[40px]">
+              🏥 Hospital Ayushman Advance Cash Memo
+            </button>
+          </div>
+        </div>
+
+        <!-- Text Input -->
+        <div class="space-y-2">
+          <label for="decrypt-input" class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Enter Legal Text:</label>
+          <textarea 
+            id="decrypt-input" 
+            rows="4" 
+            placeholder="Type or paste the official notice text here..." 
+            class="w-full p-4 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium focus:border-blue-600"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end">
+          <button onclick="decryptNoticeText()" class="a11y-accent-btn px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-sm shadow-md transition flex items-center gap-2 min-h-[48px]">
+            <span>Analyze & Explain in Plain Words</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Decrypted Result -->
+        <div id="decrypt-result-box" class="hidden"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Free Legal Aid Screener (Section 12) -->
+    <section id="tab-content-nalsa" class="space-y-6 hidden" role="tabpanel">
+      <div class="p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-6 shadow-sm a11y-card">
+        
+        <div class="space-y-1">
+          <h2 class="text-xl md:text-2xl font-black">Section 12 Free Legal Aid Screener</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Check your entitlement under the Legal Services Authorities Act, 1987 and get an official certificate for a 100% free government advocate.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <label class="p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-start gap-3 cursor-pointer hover:border-blue-500 transition">
+            <input type="checkbox" id="scr-woman" checked class="w-5 h-5 text-blue-600 rounded mt-0.5">
+            <div>
+              <div class="font-bold text-sm">Woman or Child (Sec 12-c)</div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">All women and children are automatically entitled, regardless of income.</p>
+            </div>
+          </label>
+
+          <label class="p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-start gap-3 cursor-pointer hover:border-blue-500 transition">
+            <input type="checkbox" id="scr-scst" class="w-5 h-5 text-blue-600 rounded mt-0.5">
+            <div>
+              <div class="font-bold text-sm">Member of SC or ST (Sec 12-a)</div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Guaranteed free legal defense without any financial means test.</p>
+            </div>
+          </label>
+
+          <label class="p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-start gap-3 cursor-pointer hover:border-blue-500 transition">
+            <input type="checkbox" id="scr-pwd" class="w-5 h-5 text-blue-600 rounded mt-0.5">
+            <div>
+              <div class="font-bold text-sm">Person with Disability (Sec 12-d)</div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Covered under the Rights of Persons with Disabilities (RPwD) Act, 2016.</p>
+            </div>
+          </label>
+
+          <label class="p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-start gap-3 cursor-pointer hover:border-blue-500 transition">
+            <input type="checkbox" id="scr-custody" class="w-5 h-5 text-blue-600 rounded mt-0.5">
+            <div>
+              <div class="font-bold text-sm">In Custody / Undertrial (Sec 12-g)</div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Any person in police custody or facing undertrial jail detention.</p>
+            </div>
+          </label>
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="space-y-1">
+            <label for="scr-income" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Annual Family Income (₹):</label>
+            <input type="number" id="scr-income" value="120000" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-bold min-h-[44px]">
+          </div>
+          <div class="space-y-1">
+            <label for="scr-state" class="block text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Select State:</label>
+            <select id="scr-state" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-bold min-h-[44px]">
+              <option value="default">All India (Default Limit: ₹1.5 Lakh)</option>
+              <option value="delhi">Delhi (Limit: ₹3.0 Lakh)</option>
+              <option value="maharashtra">Maharashtra (Limit: ₹3.0 Lakh)</option>
+              <option value="tamil_nadu">Tamil Nadu (Limit: ₹3.0 Lakh)</option>
+              <option value="karnataka">Karnataka (Limit: ₹3.0 Lakh)</option>
+              <option value="west_bengal">West Bengal (Limit: ₹1.5 Lakh)</option>
+              <option value="bihar">Bihar (Limit: ₹1.5 Lakh)</option>
+              <option value="uttar_pradesh">Uttar Pradesh (Limit: ₹1.5 Lakh)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+          <button onclick="runNALSAScreener()" class="a11y-accent-btn px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-sm shadow-md transition flex items-center gap-2 min-h-[48px]">
+            <span>Check My Legal Aid Entitlement</span>
+            <span>✓</span>
+          </button>
+        </div>
+
+        <!-- Certificate Box -->
+        <div id="nalsa-certificate-box" class="hidden"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Tele-Law & District Legal Services (DLSA) Connect -->
+    <section id="tab-content-telelaw" class="space-y-6 hidden" role="tabpanel">
+      <div class="p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-6 shadow-sm a11y-card">
+        
+        <div class="space-y-1">
+          <h2 class="text-xl md:text-2xl font-black">Tele-Law & District Legal Services Authority (DLSA) Connect</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Connect directly with an empaneled panel lawyer at your nearest Gram Panchayat Common Services Center (CSC).
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 space-y-2">
+            <span class="text-2xl">🏛️</span>
+            <div class="font-bold text-sm">District Court (DLSA)</div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Visit the Front Office at any District or Taluk Court. Ask for a free panel advocate.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 space-y-2">
+            <span class="text-2xl">💻</span>
+            <div class="font-bold text-sm">Common Services Center (CSC)</div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ask your Village Level Entrepreneur (VLE) to schedule a Tele-Law video consultation.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 space-y-2">
+            <span class="text-2xl">📞</span>
+            <div class="font-bold text-sm">National Toll-Free 15100</div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Available 24/7 in multiple Indian languages for emergency legal advice and bail queries.</p>
+          </div>
+
+        </div>
+
+        <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-xs text-blue-900 dark:text-blue-200 flex items-center justify-between gap-4">
+          <div>
+            <strong>Need instant phone assistance?</strong> Call 15100 directly from any phone across India.
+          </div>
+          <a href="tel:15100" class="px-4 py-2 bg-blue-600 text-white font-extrabold rounded-lg hover:bg-blue-700 transition">
+            Call 15100 Now
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARIA Live Telemetry Stream -->
+    <footer class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-mono text-xs space-y-1.5 shadow-sm a11y-card" role="region" aria-label="Screen reader live telemetry stream">
+      <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+        <span class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <strong>Screen-Reader Live Telemetry (ARIA-Live Stream)</strong>
+        </span>
+        <span>WCAG 2.2 AAA & GIGW 3.0</span>
+      </div>
+      <div id="a11y-log" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-300 text-xs overflow-x-auto truncate">
+        "Portal loaded. NALSA & Indian Statutory Legal Aid engine ready."
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

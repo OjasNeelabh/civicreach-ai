@@ -1,0 +1,52 @@
+/* CivicReach AI — Accessible Stylesheet (GIGW 3.0 & WCAG 2.2 AAA) */
+
+*:focus-visible {
+  outline: 3px solid #1D4ED8 !important;
+  outline-offset: 3px !important;
+}
+
+/* OLED High Contrast Theme */
+body.theme-high-contrast {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+body.theme-high-contrast .a11y-card {
+  background-color: #121212 !important;
+  border-color: #FFE600 !important;
+  color: #FFFFFF !important;
+}
+
+body.theme-high-contrast .a11y-accent-btn {
+  background-color: #FFE600 !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  border: 2px solid #FFFFFF !important;
+}
+
+body.theme-high-contrast .a11y-badge {
+  background-color: #FFE600 !important;
+  color: #000000 !important;
+}
+
+body.theme-high-contrast .a11y-text-muted {
+  color: #E2E8F0 !important;
+}
+
+/* Easy-Read / Dyslexia Mode */
+body.theme-easy-read {
+  letter-spacing: 0.06em !important;
+  line-height: 1.85 !important;
+  word-spacing: 0.15em !important;
+}
+
+body.theme-easy-read h1,
+body.theme-easy-read h2,
+body.theme-easy-read h3 {
+  letter-spacing: 0.08em !important;
+}
+
+/* Touch targets */
+button, select, input, textarea {
+  min-height: 44px;
+}

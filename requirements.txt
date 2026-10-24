@@ -1,0 +1,6 @@
+# CivicReach AI (India Edition) Dependencies
+# The core application runs on pure Python standard library with zero external dependencies required!
+# Optional dependencies for accelerated vector similarity:
+scikit-learn>=1.4.0
+numpy>=1.26.0
+requests>=2.31.0
