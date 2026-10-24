@@ -5,9 +5,18 @@ Zero-dependency, multi-threaded server serving both the web application and lega
 
 import json
 import os
+import sys
 import urllib.parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from .legal_engine import LegalEngine
 from .i18n import SUPPORTED_LANGUAGES, MESSAGES
 

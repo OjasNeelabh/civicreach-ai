@@ -6,6 +6,15 @@ Allows querying Indian penal codes, decrypting court notices, and screening NALS
 import argparse
 import json
 import sys
+
+# Ensure UTF-8 output on Windows consoles to prevent cp1252 UnicodeEncodeError
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from .legal_engine import LegalEngine
 from .server import start_server
 
